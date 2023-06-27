@@ -12,7 +12,7 @@ app.get('clients', (req, res) => {
 });
 
 app.post('clients', (req, res) => {
-  // Obtener los datos del cliente del cuerpo de la solicitud
+  //obtener los datos del cliente
   const { nombre, correo, edad, numeroCelular, numeroCedula } = req.body;
 
   //crear un nuevo cliente
