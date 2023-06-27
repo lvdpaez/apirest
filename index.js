@@ -1,42 +1,59 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-const customers =[{
-    name:"pepito"
-    cedula:"12324"
-    correo:"pepit1@gmail.com"
-    cumpleaños:"01/02/1990"
-    celular:"3256986"
-    direccion:"cll false #123"
+// Arreglos para almacenar los datos
+const clients = [];
+const products = [];
 
-}]
-// Middleware
-app.use(bodyParser.json());
-
-// Ruta de ejemplo
-app.get('hola', (req, res) => {
-  res.send({ mensaje: '¡Hola, mundo! desde get' });
+// Rutas de clientes
+app.get('clients', (req, res) => {
+  res.json(clients);
 });
-app.post('hola', (req, res) => {
-    res.send({ mensaje: '¡Hola, mundo!desde post' });
-  });
-  app.put('hola', (req, res) => {
-    res.send({ mensaje: '¡Hola, mundo! desde put' });
-  });
-  app.delete('hola', (req, res) => {
-    res.send({ mensaje: '¡Hola, mundo! desde delete' });
-  });
+
+app.post('clients', (req, res) => {
+  // Obtener los datos del cliente del cuerpo de la solicitud
+  const { nombre, correo, edad, numeroCelular, numeroCedula } = req.body;
+
+  //crear un nuevo cliente
+  const newClient = {
+    nombre,
+    correo,
+    edad,
+    numeroCelular,
+    numeroCedula,
+    
+  };
+
+  // Agregar el cliente al arreglo de clientes
+  clients.push(newClient);
+
+  res.json(newClient);
+});
+
+// Rutas de productos
+app.get('products', (req, res) => {
+  res.json(products);
+});
+
+app.post('products', (req, res) => {
+  // Obtener los datos del producto del cuerpo de la solicitud
+  const { tipoProducto, cantidad } = req.body;
+
+  // Crear un nuevo producto
+  const newProduct = {
+    tipoProducto,
+    cantidad,
+  };
+
+  // Agregar el producto al arreglo de productos
+  products.push(newProduct);
+
+  res.json(newProduct);
+});
 
 // Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor en funcionamiento en el puerto en http//localhost:3000 + PORT`);
+app.listen(port, () => {
+  console.log(`Servidor API REST corriendo en http://localhost:3000`);
 });
-
-
-
-
-
 
