@@ -1,19 +1,37 @@
 import express, { Request, Response } from 'express';
-import bodyParser from 'body-parser';
-
 const app = express();
-const PORT = 3000;
+const port = 3000;
 
-// Middleware
-app.use(bodyParser.json());
+interface Client {
+  nombre: string;
+  correo: string;
+  edad: number;
+  numeroCelular: string;
+  numeroCedula: string;
+}
 
-// Ruta de ejemplo
-app.get('/api/hola', (req: Request, res: Response) => {
-  res.json({ mensaje: '¡Hola, mundo!' });
+const clients: Client[] = [];
+
+app.get('clients', (req: Request, res: Response) => {
+  res.json(clients);
 });
 
-// Iniciar el servidor
-app.listen(PORT, () => {
-  console.log(`Servidor en funcionamiento en el puerto ${PORT}`);
+app.post('clients', (req: Request, res: Response) => {
+  const { nombre, correo, edad, numeroCelular, numeroCedula } = req.body;
+
+  const newClient: Client = {
+    nombre,
+    correo,
+    edad,
+    numeroCelular,
+    numeroCedula,
+  };
+
+  clients.push(newClient);
+
+  res.json(newClient);
 });
 
+app.listen(port, () => {
+  console.log(`Servidor API REST corriendo en http://localhost:3000`);
+});
