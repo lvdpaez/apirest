@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 const app = express();
 const port = 3000;
-
+console.log(`Servidor 1`);
 interface Client {
   nombre: string;
   correo: string;
@@ -9,7 +9,6 @@ interface Client {
   numeroCelular: string;
   numeroCedula: string;
 }
-
 const clients: Client[] = [];
 
 app.get('clients', (req: Request, res: Response) => {
@@ -33,5 +32,5 @@ app.post('clients', (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-  console.log(`Servidor API REST corriendo en http://localhost:3000`);
+  console.log(`Servidor API REST corriendo en http://localhost:" + 3000`);
 });
