@@ -1,122 +1,84 @@
 import express from 'express';
-import { customersDB, Customer } from '../../customersDB';
-import { getCustomers } from '../services/customers.service';
-
-let localCustomersDB = customersDB;
+import {
+  getCustomers,
+  getCustomerById,
+  getCustomerByName,
+  postCustomer,
+  putCustomer,
+  deleteCustomer
+} from '../services/customers.service';
 
 const router = express.Router();
 
-router.get('/customers', async (req, res) => {
+router.get('', async (req, res) => {
   try {
-    const limit = req.query.limit as string;
-    const response = await getCustomers(limit);
-    res.status(200).json({ result: response });
+    const response = await getCustomers();
+    res.status(response.code).json({ result: response.result });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
-router.get('/customers/id/:id', (req, res) => {
+router.get('/id/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const result = localCustomersDB.filter(item => item.id === id);
-
-    if (result.length === 0) {
-      res.status(404).json({ message: "El cliente solicitado no existe" });
-    } else {
-      res.status(200).json({ result });
-    }
+    const response = await getCustomerById(id);
+    res.status(response.code).json(response.message);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
-router.get('/customers/name/:name', (req, res) => {
+router.get('/name/:name', async (req, res) => {
   try {
     const name = req.params.name;
-    const result = localCustomersDB.filter(item => item.name === name);
-
-    if (result.length === 0) {
-      res.status(404).json({ message: "El cliente solicitado no existe" });
-    } else {
-      res.status(200).json({ result });
-    }
+    const response = await getCustomerByName(name);
+    res.status(response.code).json(response.message);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
-router.post('/customers', (req, res) => {
+router.post('', async function (req, res) {
   try {
     const body = req.body;
-    console.log(body);
-    localCustomersDB.push(body);
-    res.status(201).json({ message: 'El cliente se ha guardado' });
+    const response = await postCustomer(body);
+    res.status(response.code).json(response.message);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
-router.put('/customers/:id', (req, res) => {
+router.put('/:id', async function (req, res) {
   try {
     const id = req.params.id;
     const body = req.body;
-    const customerIndex = localCustomersDB.findIndex(item => item.id === id);
-
-    if (customerIndex === -1) {
-      res.status(404).json({ message: "El cliente no existe" });
-    } else {
-      localCustomersDB[customerIndex] = body;
-      res.status(200).json({ message: 'Cliente actualizado correctamente' });
-    }
+    const response = await putCustomer(id, body);
+    res.status(response.code).json(response.message);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
-router.delete('/customers/:id', (req, res) => {
+router.delete('/:id', async function (req, res) {
   try {
     const id = req.params.id;
-    const result = localCustomersDB.filter(item => item.id !== id);
-
-    if (result.length === localCustomersDB.length) {
-      res.status(404).json({ message: "El cliente no existe" });
-    } else {
-      localCustomersDB = result;
-      res.status(200).json({ message: "Cliente eliminado correctamente" });
-    }
+    const response = await deleteCustomer(id);
+    res.status(response.code).json(response.message);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
-  }
-});
-
-router.patch('/customers/:id', (req, res) => {
-  try {
-    const id = req.params.id;
-    const key = req.query.key as keyof Customer;
-    const value = req.query.value as string;
-
-    if (key && value) {
-      const customerIndex = localCustomersDB.findIndex(item => item.id === id);
-
-      if (customerIndex === -1) {
-        res.status(404).json({ message: "El cliente no existe" });
-      } else {
-        localCustomersDB[customerIndex][key] = value;
-        res.status(200).json({ message: 'Cliente actualizado correctamente' });
-      }
-    } else {
-      res.status(400).json({ message: "No se han enviado los queries necesarios" });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error inesperado" });
+    const customError = error as { code: number; message: string };
+    res.status(customError.code).json(customError.message);
   }
 });
 
